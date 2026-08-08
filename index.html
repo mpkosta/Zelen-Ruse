@@ -353,16 +353,20 @@ if(typeof THREE==='undefined'){
 const scene=new THREE.Scene();
 scene.background=C(0x9dbdd4);
 scene.fog=new THREE.Fog(C(0x9dbdd4).getHex(),1400,4000);
-const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,1,12000);
+// НОВО: Променяме 'near' и 'far' плановете от 1/12000 на 15/8000. 
+// Това спира "мигането" и изчезването на сгради на мобилни устройства.
+const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,15,8000);
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || Math.min(innerWidth, innerHeight) < 720;
 
-// 1. Disable logarithmicDepthBuffer on mobile to restore hardware depth-testing
 const renderer = new THREE.WebGLRenderer({
   antialias: !isMobile,
   logarithmicDepthBuffer: !isMobile,
   powerPreference: "high-performance"
 });
 
+// НОВО: Връщаме високото качество (махаме размазването), съвременните телефони ще се справят, 
+// тъй като премахнахме сенките за тях.
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 // 2. Cap pixel ratio to 1.0 on mobile to drastically reduce pixel fill-rate overhead
 renderer.setPixelRatio(isMobile ? Math.min(devicePixelRatio, 1.5) : Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
@@ -1384,61 +1388,95 @@ function flyTo(x,z,r,ph,th){
   })(t0);
 }
 const cel=renderer.domElement;
-let drag=null, moved=0, dragMode='rotate';
-let activePointerId = null; // НОВО: Следи кой пръст върти картата
+let dragMode='rotate';
+const pointers = {}; // Пази координатите на всеки пръст
+let moved = 0;
 
-cel.addEventListener('pointerdown',function(e){
-  if(flyAnim){cancelAnimationFrame(flyAnim);flyAnim=null;}
+// 1. Прихващане на докосване/клик
+cel.addEventListener('pointerdown', function(e) {
+  if(flyAnim){cancelAnimationFrame(flyAnim); flyAnim=null;}
   if(tourActive) stopTour();
   
-  // Игнорираме втори пръст (за да не скача камерата при зуум)
-  if(activePointerId !== null) return;
-  activePointerId = e.pointerId;
-
-  drag={b:e.button,x:e.clientX,y:e.clientY}; moved=0;
+  cel.setPointerCapture(e.pointerId);
+  pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+  moved = 0;
 });
 
-addEventListener('pointermove',function(e){
-  // Отразяваме движението САМО на първия пръст
-  if(!drag || e.pointerId !== activePointerId) return;
-  
-  const dx=e.clientX-drag.x, dy=e.clientY-drag.y; 
-  moved+=Math.abs(dx)+Math.abs(dy);
-  
-  if(drag.b===2||e.shiftKey||(dragMode==='pan'&&!e.altKey)) panBy(dx,dy);
-  else { theta-=dx*0.005; phi-=dy*0.005; }
-  
-  drag.x=e.clientX; drag.y=e.clientY; updateCam();
-});
+// 2. Движение (Въртене с 1 пръст, Зуум и местене с 2 пръста)
+cel.addEventListener('pointermove', function(e) {
+  if (!pointers[e.pointerId]) return;
+  e.preventDefault(); // Спира скролирането на страницата
 
-addEventListener('pointerup',function(e){
-  if(e.pointerId !== activePointerId) return; // Игнорираме пускането на втория пръст
+  const keys = Object.keys(pointers);
   
-  if(drag&&moved<6){
-    if(pinMode) tryPlacePin(e.clientX,e.clientY);
-    else pick(e.clientX,e.clientY);
+  // АКО ИМА 2 ПРЪСТА (Pinch-to-Zoom + Pan)
+  if (keys.length === 2) {
+    const p1 = pointers[keys[0]], p2 = pointers[keys[1]];
+    const prevDist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+    const prevCx = (p1.x + p2.x) / 2, prevCy = (p1.y + p2.y) / 2;
+
+    pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; // Обновяваме текущия пръст
+
+    const p1New = pointers[keys[0]], p2New = pointers[keys[1]];
+    const newDist = Math.hypot(p1New.x - p2New.x, p1New.y - p2New.y);
+    const newCx = (p1New.x + p2New.x) / 2, newCy = (p1New.y + p2New.y) / 2;
+
+    if (prevDist > 0) radius *= (prevDist / newDist); // Зуум
+    panBy(newCx - prevCx, newCy - prevCy);            // Местене
+    
+    moved += 10;
+    updateCam();
+  } 
+  // АКО Е 1 ПРЪСТ / МИШКА (Rotate или Pan според бутона)
+  else if (keys.length === 1) {
+    const p = pointers[e.pointerId];
+    const dx = e.clientX - p.x, dy = e.clientY - p.y;
+    moved += Math.abs(dx) + Math.abs(dy);
+    
+    // e.button === 2 е Десен клик. 
+    if (e.button === 2 || e.shiftKey || (dragMode === 'pan' && !e.altKey)) {
+      panBy(dx, dy);
+    } else {
+      theta -= dx * 0.005;
+      phi -= dy * 0.005;
+    }
+    p.x = e.clientX; p.y = e.clientY;
+    updateCam();
   }
-  drag=null;
-  activePointerId=null; // Освобождаваме контрола
 });
 
-addEventListener('pointercancel',function(e){
-  if(e.pointerId === activePointerId) { drag=null; activePointerId=null; }
-});
-cel.addEventListener('wheel',function(e){
+// 3. Отпускане на пръст/мишка
+function handlePointerEnd(e) {
+  if (!pointers[e.pointerId]) return;
+  delete pointers[e.pointerId];
+  
+  // Ако всички пръсти са вдигнати и не сме влачили (moved < 6) -> това е КЛИК
+  if (Object.keys(pointers).length === 0 && moved < 6) {
+    if(pinMode) tryPlacePin(e.clientX, e.clientY);
+    else pick(e.clientX, e.clientY);
+  }
+}
+
+cel.addEventListener('pointerup', handlePointerEnd);
+cel.addEventListener('pointercancel', handlePointerEnd);
+cel.addEventListener('pointerout', handlePointerEnd);
+
+// 4. Скрол с мишка (само за компютри)
+cel.addEventListener('wheel', function(e) {
   e.preventDefault();
-  if(e.ctrlKey||e.metaKey) radius*=1+e.deltaY*0.004; else panBy(-e.deltaX*0.9,-e.deltaY*0.9);
+  if(e.ctrlKey || e.metaKey) radius *= 1 + e.deltaY * 0.004;
+  else panBy(-e.deltaX * 0.9, -e.deltaY * 0.9);
   updateCam();
-},{passive:false});
-addEventListener('keydown',function(e){
-  // НОВО: Игнорираме натискането на клавиши, ако сме фокусирали текстово поле
-  if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+}, {passive: false});
 
-  const st=radius/16;
-  if(e.key==='ArrowUp')panBy(0,st); else if(e.key==='ArrowDown')panBy(0,-st);
-  else if(e.key==='ArrowLeft')panBy(st,0); else if(e.key==='ArrowRight')panBy(-st,0);
-  else if(e.key==='q'||e.key==='Q')theta+=0.08; else if(e.key==='e'||e.key==='E')theta-=0.08;
-  else if(e.key==='+'||e.key==='=')radius*=0.88; else if(e.key==='-')radius*=1.14;
+// 5. Клавиатура (само за компютри)
+addEventListener('keydown', function(e) {
+  if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const st = radius / 16;
+  if(e.key === 'ArrowUp') panBy(0, st); else if(e.key === 'ArrowDown') panBy(0, -st);
+  else if(e.key === 'ArrowLeft') panBy(st, 0); else if(e.key === 'ArrowRight') panBy(-st, 0);
+  else if(e.key === 'q' || e.key === 'Q') theta += 0.08; else if(e.key === 'e' || e.key === 'E') theta -= 0.08;
+  else if(e.key === '+' || e.key === '=') radius *= 0.88; else if(e.key === '-') radius *= 1.14;
   else return;
   e.preventDefault(); updateCam();
 });
@@ -1787,9 +1825,15 @@ function loop(){
   updateLabels();
   renderer.render(scene,camera);
 }
+// НОВО: "Debounce" функция. Предотвратява забиването на телефона, 
+// когато URL лентата се скрива и показва по време на игра с картата.
+let resizeTimer = null;
 addEventListener('resize',function(){
-  camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth,innerHeight);
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function(){
+    camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+  }, 150);
 });
 applyLang(); updateCam(); loop();
 build().then(function(){ loadPins(); });
