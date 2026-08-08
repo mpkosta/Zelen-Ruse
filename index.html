@@ -210,7 +210,7 @@
 <div id="disc"></div><div id="hint"></div>
 
 <script>
-const L={bg:{"title": "ЗЕЛЕН <span>РУСЕ</span>", "subtitle": "3D карта на сянката — къде градът ни има нужда от дървета", "heat": "☀ Горещи коридори", "trees": "🌳 Предложения", "stBtn": "🛣 Имена на улици", "sunLbl": "Час", "mood": ["◐ Приглушено", "◑ Нормално", "◉ Ярко"], "shadeLbl": "Ниво на сянка", "propLbl": "🌳 Предложение за засаждане", "help": "🌱 Искам да засадя дърво тук", "lgCorr": "Горещ коридор (кликни)", "lgProp": "Предложени дървета", "lgLm": "Забележителност (кликни)", "lgRiver": "Дунав", "hint": "Влачене — въртене · Скрол — местене · Ctrl+скрол — мащаб · Кликни точка", "disc": "Сгради, улици, паркове и дървета: © OpenStreetMap contributors (ODbL). Реални геометрии, не приблизителни.", "sunLow": "слабо слънце", "sunMid": "силно слънце", "sunHigh": "ЕКСТРЕМНО слънце", "types": {"landmark": "Забележителност", "district": "Квартал", "park": "Парк", "street": "Булевард / улица"}, "overviewBtn": "🏠 Начало", "tourBtn": "🎬 Обиколка", "tourBtnStop": "⏹ Спри", "impactBtn": "📊 Въздействие", "aboutBtn": "ⓘ За проекта", "impH": "Очакван ефект (при пълно засаждане)", "impTreesLbl": "предложени дървета", "impCo2Lbl": "тона CO₂ годишно (зрели дървета)", "impCoolLbl": "по-хладно в засенчените улици", "impKmLbl": "км горещи артерии без сянка днес", "impNote": "Дърветата са разположени по реалните трасета на горещите артерии от OpenStreetMap, на ~14 м разстояние. По данни на World Resources Institute короната подобрява топлинния комфорт с 2–8°C; засенчените настилки могат да са с 11–25°C по-хладни. Ориентировъчно за Русе, не измервано локално.", "introP1": "3D макет на Русе, построен от реални данни на OpenStreetMap — всяка сграда, улица, парк и дърво са автентични.", "introL1": "Критично — спешно нужни дървета", "introL2": "Ниско ниво на сянка — препоръчително", "introL3": "Добра сянка — модел за останалия град", "introP2": "Кликнете върху квартал, булевард или забележителност за анализ и предложение. Плъзнете часовника за сянката през деня, а бутонът за яркост сменя настроението на макета.", "introBtn": "Разбрах — покажи картата", "aboutTitle": "За проекта „Зелен Русе“", "aboutP1": "Гражданска инициатива на жител на Русе. Макетът е построен изцяло от реални данни на OpenStreetMap: 7862 сгради с истинските си контури, височини и покриви, 2182 улици, 504 зелени площи, 111 спортни площадки, 220 площада и паркинга, 223 отсечки железен път, 8 фонтана и 445 картирани дървета плюс 176 дървесни реда. Брегът на Дунав е изведен от държавната граница и от очертанията на застроената територия.", "aboutP2": "Моделът използва и 123 архитектурни части (building:part) от OSM — кули, куполи, мансарди — заради които сградите имат обем, а не са прости кутии. Поддържат се шест типа покрив: плосък, четирискатен, двускатен, куполен, пирамидален и мансарден. Когато сграда има собствени части, те заместват контура ѝ (правило Simple 3D Buildings) — иначе двете стени съвпадат и картината трепти. Храмовете, музеите и представителните сгради (30 на брой) са без прозоречна текстура, а Пантеонът е изграден като собствен модел: плътен обем върху стъпаловиден постамент със златен купол. Височините идват от OSM там, където са картирани, а за останалите се изчисляват по типа и площта. Две явни грешки в данните са коригирани поименно: Пантеонът (в OSM 3 m за ротонда от ~20 m) и Операта (5 m). Улиците се чертаят с действителната си широчина, а дърветата с реални размери (~8 m корона), като решетка на заетостта следи нищо да не попада върху сграда или платно. 4705 сгради имат скатни покриви: 1148 са изрично картирани като такива в OSM (заедно с цвят „maroon“ и височина на покрива), а останалите са малки жилищни сгради, при които скатният керемиден покрив е нормата в Русе. Дърветата в парковете са допълнени, защото OSM не картира всяко отделно дърво.", "aboutP3": "Стадионите, пистите и трибуните използват действителните си очертания от OSM (трибуните на стадион „Дунав“ например са картирани със 106 точки), а маркировката на футболните игрища се изчислява от формата на самото игрище. Фасадите с прозорци, скатните покриви, куполите на Пантеона и „Св. Троица“ и телевизионната кула са по реалните си места. Анализът на сянката и предложенията за засаждане са граждански принос, а не одобрен план — отправна точка за разговор с Община Русе и Дирекция „Паркове и градини“.", "ld1": "Изчертаване на Дунав…", "ld2": "Полагане на паркове и градини…", "ld3": "Прокарване на улиците, площадите и релсите…", "ld4": "Изграждане на 7862 сгради с покриви и фасади…", "ld5": "Засаждане на дърветата…", "ld6": "Маркиране на горещите коридори…", "ld7": "Готово", "pinBtn": "📍 Добави точка", "pinHint": "Кликнете върху вашата улица, за да я отбележите", "pinCancel": "Отказ", "pinTitle": "Поправете картата тук", "pinNeeds": "🔴 Тук НЯМА дърво — нужна е сянка", "pinHas": "🟢 Тук ИМА дърво (липсва на картата)", "pinPlaceholder": "По желание: кажете нещо повече (напр. „спирката е на пек цял ден“)", "pinPrivacy": "Не събираме име, имейл или лични данни — само мястото и вашата бележка. Точките се преглеждат, преди да се появят на картата.", "pinSend": "Изпрати", "pinThanks": "Благодарим! Точката ще се появи след преглед.", "pinTooMany": "Твърде много точки за кратко време. Опитайте по-късно.", "pinError": "Възникна грешка. Опитайте отново.", "pinOutside": "Тази точка е извън Русе.", "pinOnBuilding": "Това е сграда — изберете улица или двор.", "pinInWater": "Това е Дунав 🙂", "pinOffline": "Подаването на точки още не е включено.", "toastCopied": "Имейлът е копиран"},en:{"title": "GREEN <span>RUSE</span>", "subtitle": "3D shade map — where our city needs trees", "heat": "☀ Hot corridors", "trees": "🌳 Proposals", "stBtn": "🛣 Street names", "sunLbl": "Hour", "mood": ["◐ Muted", "◑ Normal", "◉ Bright"], "shadeLbl": "Shade level", "propLbl": "🌳 Planting proposal", "help": "🌱 I want to plant a tree here", "lgCorr": "Hot corridor (click)", "lgProp": "Proposed trees", "lgLm": "Landmark (click)", "lgRiver": "The Danube", "hint": "Drag — rotate · Scroll — pan · Ctrl+scroll — zoom · Click a point", "disc": "Buildings, streets, parks and trees: © OpenStreetMap contributors (ODbL). Real geometry, not approximations.", "sunLow": "mild sun", "sunMid": "strong sun", "sunHigh": "EXTREME sun", "types": {"landmark": "Landmark", "district": "District", "park": "Park", "street": "Boulevard / street"}, "overviewBtn": "🏠 Overview", "tourBtn": "🎬 Tour", "tourBtnStop": "⏹ Stop", "impactBtn": "📊 Impact", "aboutBtn": "ⓘ About", "impH": "Projected impact (if fully planted)", "impTreesLbl": "trees proposed", "impCo2Lbl": "tonnes CO₂ per year (mature trees)", "impCoolLbl": "cooler on shaded streets", "impKmLbl": "km of hot shadeless arteries today", "impNote": "Trees are placed along the real OpenStreetMap alignments of the hot arteries at ~14 m spacing. Per World Resources Institute, canopy improves thermal comfort by 2–8°C; shaded paving can be 11–25°C cooler. Indicative for Ruse, not locally measured.", "introP1": "A 3D model of Ruse built entirely from real OpenStreetMap data — every building, street, park and tree is authentic.", "introL1": "Critical — trees urgently needed", "introL2": "Low shade — planting recommended", "introL3": "Good shade — the model for the rest", "introP2": "Click a district, boulevard or landmark for the analysis and a proposal. Drag the clock to watch the shade move; the brightness button changes the mood of the model.", "introBtn": "Got it — show the map", "aboutTitle": "About \"Green Ruse\"", "aboutP1": "A citizen initiative by a resident of Ruse. The model is built entirely from real OpenStreetMap data: 7,862 buildings with true footprints, heights and roofs, 2,182 streets, 504 green areas, 111 sports pitches, 220 squares and car parks, 223 railway sections, 8 fountains and 445 mapped trees plus 176 tree rows. The Danube bank is derived from the national border and the built-up outline.", "aboutP2": "The model also renders 123 architectural parts (building:part) from OSM — towers, domes, mansards — which is what gives buildings real massing rather than plain boxes. Six roof types are supported: flat, hipped, gabled, domed, pyramidal and mansard. Where a building has its own parts, those replace its outline (the Simple 3D Buildings rule) — otherwise the two wall surfaces coincide and the image flickers. Churches, museums and civic buildings (30 of them) carry no window texture, and the Pantheon is a purpose-built model: a solid volume on a stepped plinth with a golden dome. Heights come from OSM where mapped; the rest are estimated from type and footprint. Two clear data errors are corrected by name: the Pantheon (OSM says 3 m for a ~20 m rotunda) and the Opera (5 m). Streets are drawn at their true width and trees at real size (~8 m canopy), with an occupancy grid ensuring nothing is placed on a building or a carriageway. 4,705 buildings have pitched roofs: 1,148 are explicitly tagged as such in OSM (with maroon colour and roof height), the rest are small residential buildings where a pitched tile roof is the norm in Ruse. Park trees are supplemented, as OSM does not map every individual tree.", "aboutP3": "Стадионите, пистите и трибуните използват действителните си очертания от OSM (трибуните на стадион „Дунав“ например са картирани със 106 точки), а маркировката на футболните игрища се изчислява от формата на самото игрище. Фасадите с прозорци, скатните покриви, куполите на Пантеона и „Св. Троица“ и телевизионната кула са по реалните си места. Анализът на сянката и предложенията за засаждане са граждански принос, а не одобрен план — отправна точка за разговор с Община Русе и Дирекция „Паркове и градини“.", "ld1": "Drawing the Danube…", "ld2": "Laying out parks and gardens…", "ld3": "Laying streets, squares and railways…", "ld4": "Raising 7,862 buildings with roofs and facades…", "ld5": "Planting the trees…", "ld6": "Marking the hot corridors…", "ld7": "Ready", "pinBtn": "📍 Add a point", "pinHint": "Click your street to mark it", "pinCancel": "Cancel", "pinTitle": "Correct the map here", "pinNeeds": "🔴 No tree here — shade needed", "pinHas": "🟢 There IS a tree here (missing on the map)", "pinPlaceholder": "Optional: tell us more (e.g. \"the bus stop bakes all day\")", "pinPrivacy": "We collect no name, email or personal data — only the location and your note. Points are reviewed before appearing on the map.", "pinSend": "Send", "pinThanks": "Thank you! Your point will appear after review.", "pinTooMany": "Too many points too quickly. Please try later.", "pinError": "Something went wrong. Please try again.", "pinOutside": "That point is outside Ruse.", "pinOnBuilding": "That is a building — pick a street or yard.", "pinInWater": "That is the Danube 🙂", "pinOffline": "Point submission is not enabled yet.", "toastCopied": "Email copied"}};
+const L={bg:{"title": "ЗЕЛЕН <span>РУСЕ</span>", "subtitle": "3D карта на сянката — къде градът ни има нужда от дървета", "heat": "☀ Горещи коридори", "trees": "🌳 Предложения", "stBtn": "🛣 Имена на улици", "sunLbl": "Час", "mood": ["◐ Приглушено", "◑ Нормално", "◉ Ярко"], "shadeLbl": "Ниво на сянка", "propLbl": "🌳 Предложение за засаждане", "help": "🌱 Искам да засадя дърво тук", "lgCorr": "Горещ коридор (кликни)", "lgProp": "Предложени дървета", "lgLm": "Забележителност (кликни)", "lgRiver": "Дунав", "hint": "Влачене — въртене · Скрол — местене · Ctrl+скрол — мащаб · Кликни точка", "disc": "Сгради, улици, паркове и дървета: © OpenStreetMap contributors (ODbL). Реални геометрии, не приблизителни.", "sunLow": "слабо слънце", "sunMid": "силно слънце", "sunHigh": "ЕКСТРЕМНО слънце", "types": {"landmark": "Забележителност", "district": "Квартал", "park": "Парк", "street": "Булевард / улица"}, "overviewBtn": "🏠 Начало", "tourBtn": "🎬 Обиколка", "tourBtnStop": "⏹ Спри", "impactBtn": "📊 Въздействие", "aboutBtn": "ⓘ За проекта", "impH": "Очакван ефект (при пълно засаждане)", "impTreesLbl": "предложени дървета", "impCo2Lbl": "тона CO₂ годишно (зрели дървета)", "impCoolLbl": "по-хладно в засенчените улици", "impKmLbl": "км горещи артерии без сянка днес", "impNote": "Дърветата са разположени по реалните трасета на горещите артерии от OpenStreetMap, на ~14 м разстояние. По данни на World Resources Institute короната подобрява топлинния комфорт с 2–8°C; засенчените настилки могат да са с 11–25°C по-хладни. Ориентировъчно за Русе, не измервано локално.", "introP1": "3D макет на Русе, построен от реални данни на OpenStreetMap — всяка сграда, улица, парк и дърво са автентични.", "introL1": "Критично — спешно нужни дървета", "introL2": "Ниско ниво на сянка — препоръчително", "introL3": "Добра сянка — модел за останалия град", "introP2": "Кликнете върху квартал, булевард или забележителност за анализ и предложение. Плъзнете часовника за сянката през деня, а бутонът за яркост сменя настроението на макета.", "introBtn": "Разбрах — покажи картата", "aboutTitle": "За проекта „Зелен Русе“", "aboutP1": "Гражданска инициатива на жител на Русе. Макетът е построен изцяло от реални данни на OpenStreetMap: 7862 сгради с истинските си контури, височини и покриви, 2182 улици, 504 зелени площи, 111 спортни площадки, 220 площада и паркинга, 223 отсечки железен път, 8 фонтана и 445 картирани дървета плюс 176 дървесни реда. Брегът на Дунав е изведен от държавната граница и от очертанията на застроената територия.", "aboutP2": "Моделът използва и 123 архитектурни части (building:part) от OSM — кули, куполи, мансарди — заради които сградите имат обем, а не са прости кутии. Поддържат се шест типа покрив: плосък, четирискатен, двускатен, куполен, пирамидален и мансарден. Когато сграда има собствени части, те заместват контура ѝ (правило Simple 3D Buildings) — иначе двете стени съвпадат и картината трепти. Храмовете, музеите и представителните сгради (30 на брой) са без прозоречна текстура, а Пантеонът е изграден като собствен модел: плътен обем върху стъпаловиден постамент със златен купол. Височините идват от OSM там, където са картирани, а за останалите се изчисляват по типа и площта. Две явни грешки в данните са коригирани поименно: Пантеонът (в OSM 3 m за ротонда от ~20 m) и Операта (5 m). Улиците се чертаят с действителната си широчина, а дърветата с реални размери (~8 m корона), като решетка на заетостта следи нищо да не попада върху сграда или платно. 4705 сгради имат скатни покриви: 1148 са изрично картирани като такива в OSM (заедно с цвят „maroon“ и височина на покрива), а останалите са малки жилищни сгради, при които скатният керемиден покрив е нормата в Русе. Дърветата в парковете са допълнени, защото OSM не картира всяко отделно дърво.", "aboutP3": "Стадионите, пистите и трибуните използват действителните си очертания от OSM (трибуните на стадион „Дунав“ например са картирани със 106 точки), а маркировката на футболните игрища се изчислява от формата на самото игрище. Фасадите с прозорци, скатните покриви, куполите на Пантеона и „Св. Троица“ и телевизионната кула са по реалните си места. Анализът на сянката и предложенията за засаждане са граждански принос, а не одобрен план — отправна точка за разговор с Община Русе и Дирекция „Паркове и градини“.", "ld1": "Изчертаване на Дунав…", "ld2": "Полагане на паркове и градини…", "ld3": "Прокарване на улиците, площадите и релсите…", "ld4": "Изграждане на 7862 сгради с покриви и фасади…", "ld5": "Засаждане на дърветата…", "ld6": "Маркиране на горещите коридори…", "ld7": "Готово", "pinBtn": "📍 Добави точка", "pinHint": "Кликнете върху дърво или празно място", "pinCancel": "Отказ", "pinTitle": "Поправете картата тук", "pinNeeds": "🔴 Това дърво го НЯМА<br><small style=\"opacity:.75\">или мястото е голо</small>", "pinHas": "🟢 Тук ИМА дърво<br><small style=\"opacity:.75\">картата го пропуска</small>", "pinOnTree": "избрано дърво", "pinEmpty": "празно място", "pinPlaceholder": "По желание: кажете нещо повече (напр. „спирката е на пек цял ден“)", "pinPrivacy": "Не събираме име, имейл или лични данни — само мястото и вашата бележка. Точките се преглеждат, преди да се появят на картата.", "pinSend": "Изпрати", "pinThanks": "Благодарим! Точката ще се появи след преглед.", "pinTooMany": "Твърде много точки за кратко време. Опитайте по-късно.", "pinError": "Възникна грешка. Опитайте отново.", "pinOutside": "Тази точка е извън Русе.", "pinOnBuilding": "Това е сграда — изберете улица или двор.", "pinInWater": "Това е Дунав 🙂", "pinOffline": "Подаването на точки още не е включено.", "toastCopied": "Имейлът е копиран"},en:{"title": "GREEN <span>RUSE</span>", "subtitle": "3D shade map — where our city needs trees", "heat": "☀ Hot corridors", "trees": "🌳 Proposals", "stBtn": "🛣 Street names", "sunLbl": "Hour", "mood": ["◐ Muted", "◑ Normal", "◉ Bright"], "shadeLbl": "Shade level", "propLbl": "🌳 Planting proposal", "help": "🌱 I want to plant a tree here", "lgCorr": "Hot corridor (click)", "lgProp": "Proposed trees", "lgLm": "Landmark (click)", "lgRiver": "The Danube", "hint": "Drag — rotate · Scroll — pan · Ctrl+scroll — zoom · Click a point", "disc": "Buildings, streets, parks and trees: © OpenStreetMap contributors (ODbL). Real geometry, not approximations.", "sunLow": "mild sun", "sunMid": "strong sun", "sunHigh": "EXTREME sun", "types": {"landmark": "Landmark", "district": "District", "park": "Park", "street": "Boulevard / street"}, "overviewBtn": "🏠 Overview", "tourBtn": "🎬 Tour", "tourBtnStop": "⏹ Stop", "impactBtn": "📊 Impact", "aboutBtn": "ⓘ About", "impH": "Projected impact (if fully planted)", "impTreesLbl": "trees proposed", "impCo2Lbl": "tonnes CO₂ per year (mature trees)", "impCoolLbl": "cooler on shaded streets", "impKmLbl": "km of hot shadeless arteries today", "impNote": "Trees are placed along the real OpenStreetMap alignments of the hot arteries at ~14 m spacing. Per World Resources Institute, canopy improves thermal comfort by 2–8°C; shaded paving can be 11–25°C cooler. Indicative for Ruse, not locally measured.", "introP1": "A 3D model of Ruse built entirely from real OpenStreetMap data — every building, street, park and tree is authentic.", "introL1": "Critical — trees urgently needed", "introL2": "Low shade — planting recommended", "introL3": "Good shade — the model for the rest", "introP2": "Click a district, boulevard or landmark for the analysis and a proposal. Drag the clock to watch the shade move; the brightness button changes the mood of the model.", "introBtn": "Got it — show the map", "aboutTitle": "About \"Green Ruse\"", "aboutP1": "A citizen initiative by a resident of Ruse. The model is built entirely from real OpenStreetMap data: 7,862 buildings with true footprints, heights and roofs, 2,182 streets, 504 green areas, 111 sports pitches, 220 squares and car parks, 223 railway sections, 8 fountains and 445 mapped trees plus 176 tree rows. The Danube bank is derived from the national border and the built-up outline.", "aboutP2": "The model also renders 123 architectural parts (building:part) from OSM — towers, domes, mansards — which is what gives buildings real massing rather than plain boxes. Six roof types are supported: flat, hipped, gabled, domed, pyramidal and mansard. Where a building has its own parts, those replace its outline (the Simple 3D Buildings rule) — otherwise the two wall surfaces coincide and the image flickers. Churches, museums and civic buildings (30 of them) carry no window texture, and the Pantheon is a purpose-built model: a solid volume on a stepped plinth with a golden dome. Heights come from OSM where mapped; the rest are estimated from type and footprint. Two clear data errors are corrected by name: the Pantheon (OSM says 3 m for a ~20 m rotunda) and the Opera (5 m). Streets are drawn at their true width and trees at real size (~8 m canopy), with an occupancy grid ensuring nothing is placed on a building or a carriageway. 4,705 buildings have pitched roofs: 1,148 are explicitly tagged as such in OSM (with maroon colour and roof height), the rest are small residential buildings where a pitched tile roof is the norm in Ruse. Park trees are supplemented, as OSM does not map every individual tree.", "aboutP3": "Стадионите, пистите и трибуните използват действителните си очертания от OSM (трибуните на стадион „Дунав“ например са картирани със 106 точки), а маркировката на футболните игрища се изчислява от формата на самото игрище. Фасадите с прозорци, скатните покриви, куполите на Пантеона и „Св. Троица“ и телевизионната кула са по реалните си места. Анализът на сянката и предложенията за засаждане са граждански принос, а не одобрен план — отправна точка за разговор с Община Русе и Дирекция „Паркове и градини“.", "ld1": "Drawing the Danube…", "ld2": "Laying out parks and gardens…", "ld3": "Laying streets, squares and railways…", "ld4": "Raising 7,862 buildings with roofs and facades…", "ld5": "Planting the trees…", "ld6": "Marking the hot corridors…", "ld7": "Ready", "pinBtn": "📍 Add a point", "pinHint": "Click a tree or an empty spot", "pinCancel": "Cancel", "pinTitle": "Correct the map here", "pinNeeds": "🔴 This tree is NOT there<br><small style=\"opacity:.75\">or the spot is bare</small>", "pinHas": "🟢 There IS a tree here<br><small style=\"opacity:.75\">the map is missing it</small>", "pinOnTree": "tree selected", "pinEmpty": "empty spot", "pinPlaceholder": "Optional: tell us more (e.g. \"the bus stop bakes all day\")", "pinPrivacy": "We collect no name, email or personal data — only the location and your note. Points are reviewed before appearing on the map.", "pinSend": "Send", "pinThanks": "Thank you! Your point will appear after review.", "pinTooMany": "Too many points too quickly. Please try later.", "pinError": "Something went wrong. Please try again.", "pinOutside": "That point is outside Ruse.", "pinOnBuilding": "That is a building — pick a street or yard.", "pinInWater": "That is the Danube 🙂", "pinOffline": "Point submission is not enabled yet.", "toastCopied": "Email copied"}};
 let lang='bg';
 const HOTKM=44.08;
 const streetLabelSrc=[];
@@ -1017,37 +1017,7 @@ async function build(){
   }
   decPts(D.t).forEach(function(p){ const q=nudgeOut(T(p)); if(q) treePts.push(q); });
 
-  // ——— прилагане на гражданските корекции ———
-  const EDITS=window.__EDITS||[];
-  const M_LAT_E=111300, M_LON_E=111320*Math.cos(D.o[1]*Math.PI/180);
-  function llToXZ(lon,lat){ return [ (lon-D.o[0])*M_LON_E*SC, (D.o[1]-lat)*M_LAT_E*SC ]; }
-  const RADIUS=8*SC;                       // 8 метра около посоченото място
-  const removes=EDITS.filter(function(e){return e.a==='remove';}).map(function(e){return llToXZ(e.lon,e.lat);});
-  if(removes.length){
-    for(let i=treePts.length-1;i>=0;i--){
-      const t=treePts[i];
-      for(let k=0;k<removes.length;k++){
-        const dx=t[0]-removes[k][0], dz=t[1]-removes[k][1];
-        if(dx*dx+dz*dz < RADIUS*RADIUS){ treePts.splice(i,1); break; }
-      }
-    }
-  }
-  EDITS.forEach(function(e){
-    if(e.a==='add'){ const q=llToXZ(e.lon,e.lat); treePts.push(q); }
-  });
-  window.__editStats={add:EDITS.filter(function(e){return e.a==='add';}).length,
-                      remove:removes.length,
-                      suggest:EDITS.filter(function(e){return e.a==='suggest';}).length};
-  D.tr.forEach(function(s){
-    const pts=decPts(s).map(T);
-    for(let i=0;i<pts.length-1;i++){
-      const a=pts[i],b=pts[i+1],L2=Math.hypot(b[0]-a[0],b[1]-a[1]),n=Math.max(1,Math.floor(L2/2.4));
-      for(let k=0;k<n;k++){
-        const x=a[0]+(b[0]-a[0])*k/n, z=a[1]+(b[1]-a[1])*k/n;
-        if(freeSpot(x,z,true)) treePts.push([x,z]);
-      }
-    }
-  });
+
   // паркови дървета (OSM не картира всяко дърво в парк)
   let sd=99991; function rr(){ sd=(sd*16807)%2147483647; return (sd-1)/2147483646; }
   function ptIn(poly,x,y){
@@ -1071,6 +1041,31 @@ async function build(){
       if(ptIn(poly,x,y) && freeSpot(x,y,true)){ treePts.push([x,y]); placed++; }
     }
   });
+  // ——— граждански корекции: прилагат се върху ВСИЧКИ дървета ———
+  (function applyEdits(){
+    const EDITS=window.__EDITS||[];
+    if(!EDITS.length){ window.__editStats={add:0,remove:0,suggest:0}; return; }
+    const MLA=111300, MLO=111320*Math.cos(D.o[1]*Math.PI/180);
+    function llToXZ(lon,lat){ return [ (lon-D.o[0])*MLO*SC, (D.o[1]-lat)*MLA*SC ]; }
+    // 4 m: точката се "залепва" за самото дърво при цъкане, така че
+    // толерансът трябва само да покрие закръгляването на координатите.
+    const R=4*SC, R2=R*R;
+    const removes=EDITS.filter(function(e){return e.a==='remove';}).map(function(e){return llToXZ(e.lon,e.lat);});
+    let gone=0;
+    for(let i=treePts.length-1;i>=0;i--){
+      const t=treePts[i];
+      for(let k=0;k<removes.length;k++){
+        const dx=t[0]-removes[k][0], dz=t[1]-removes[k][1];
+        if(dx*dx+dz*dz<R2){ treePts.splice(i,1); gone++; break; }
+      }
+    }
+    let added=0;
+    EDITS.forEach(function(e){ if(e.a==='add'){ treePts.push(llToXZ(e.lon,e.lat)); added++; } });
+    window.__editStats={add:added,remove:gone,
+                        suggest:EDITS.filter(function(e){return e.a==='suggest';}).length};
+  })();
+  window.__TREEPTS=treePts;          // за избиране на дърво с мишка
+
   (function(){
     // Дърво с реални размери: корона ~7 m напречник, височина ~11 m.
     // Хоризонтално 1 m = SC единици; вертикално 1 m = SC*2.15 (преувеличение).
@@ -1746,8 +1741,8 @@ function applyLang(){
   document.getElementById('pinHint').textContent=S.pinHint;
   document.getElementById('pinCancel').textContent=S.pinCancel;
   document.getElementById('pinTitle').textContent=S.pinTitle;
-  document.getElementById('kindNeeds').textContent=S.pinNeeds;
-  document.getElementById('kindHas').textContent=S.pinHas;
+  document.getElementById('kindNeeds').innerHTML=S.pinNeeds;
+  document.getElementById('kindHas').innerHTML=S.pinHas;
   document.getElementById('pinComment').placeholder=S.pinPlaceholder;
   document.getElementById('pinPrivacy').textContent=S.pinPrivacy;
   document.getElementById('pinSend').textContent=S.pinSend;
@@ -1771,7 +1766,7 @@ langBtn.onclick=function(){ lang=lang==='bg'?'en':'bg'; applyLang(); };
 // Локално тестване: 'http://127.0.0.1:8000'
 // След деплой в Railway: 'https://вашият-адрес.up.railway.app'
 // Празно = събирането на точки е изключено (картата работи нормално).
-const API_BASE='https://web-production-83138.up.railway.app';
+const API_BASE='';
 
 // обратна проекция: единици на макета -> географски координати
 const M_LAT=111300, M_LON=111320*Math.cos(D.o[1]*Math.PI/180);
@@ -1835,8 +1830,8 @@ document.getElementById('pinBtn').onclick=function(){
   if(!API_BASE){ toast(L[lang].pinOffline); return; }
   setPinMode(!pinMode);
 };
-document.getElementById('pinCancel').onclick=function(){ setPinMode(false); };
-document.getElementById('pinClose').onclick=function(){ pinWrap.classList.remove('open'); };
+document.getElementById('pinCancel').onclick=function(){ setPinMode(false); clearPinGhost(); };
+document.getElementById('pinClose').onclick=function(){ pinWrap.classList.remove('open'); clearPinGhost(); };
 document.querySelectorAll('.pinKind').forEach(function(b){
   b.onclick=function(){
     pinKind=b.dataset.k;
@@ -1857,7 +1852,7 @@ document.getElementById('pinSend').onclick=function(){
      btn.disabled=false;
      if(res.s===201){
        // Пинът вече НЕ се появява веднага. Ще се зареди от базата данни чак след като го одобриш.
-       pinWrap.classList.remove('open'); setPinMode(false);
+       pinWrap.classList.remove('open'); setPinMode(false); clearPinGhost();
        toast(L[lang].pinThanks);
      } else if(res.s===429){ toast(L[lang].pinTooMany); }
      else { toast(L[lang].pinError); }
@@ -1873,19 +1868,51 @@ function tryPlacePin(sx,sy){
   pinNdc.set((sx/innerWidth)*2-1,-(sy/innerHeight)*2+1);
   pinRay.setFromCamera(pinNdc,camera);
   if(!pinRay.ray.intersectPlane(groundPlane,hitPt)) return;
-  const x=hitPt.x, z=hitPt.z;
+  let x=hitPt.x, z=hitPt.z;
   if(x<TABLE.x0||x>TABLE.x1||z<TABLE.z0||z>TABLE.z1){ toast(L[lang].pinOutside); return; }
-  if(window.__occAt && window.__occAt('B',x,z)){ toast(L[lang].pinOnBuilding); return; }
   if(window.__inWater && window.__inWater(x,z)){ toast(L[lang].pinInWater); return; }
+
+  // Цъкнахме ли върху дърво? Търсим най-близкото в радиус 10 m и се
+  // "залепваме" точно за него, за да може премахването да е сигурно.
+  const TP=window.__TREEPTS||[];
+  const SNAP=10*SC, SNAP2=SNAP*SNAP;
+  let best=-1, bd=SNAP2;
+  for(let i=0;i<TP.length;i++){
+    const dx=TP[i][0]-x, dz=TP[i][1]-z, d=dx*dx+dz*dz;
+    if(d<bd){ bd=d; best=i; }
+  }
+  const onTree = best>=0;
+  if(onTree){ x=TP[best][0]; z=TP[best][1]; }
+
   const ll=toLonLat(x,z);
-  pendingPin={lon:ll[0],lat:ll[1],district:nearestDistrict(x,z),street:nearestStreet(x,z)};
+  pendingPin={lon:ll[0],lat:ll[1],district:nearestDistrict(x,z),street:nearestStreet(x,z),tree:onTree};
+  const where=(pendingPin.street? pendingPin.street+' · ':'')+pendingPin.district;
   document.getElementById('pinWhere').textContent=
-    (pendingPin.street? pendingPin.street+' · ':'')+pendingPin.district;
+    where+' — '+(onTree? L[lang].pinOnTree : L[lang].pinEmpty);
   document.getElementById('pinComment').value='';
-  pinKind='needs';
-  document.querySelectorAll('.pinKind').forEach(function(o){o.classList.toggle('sel',o.dataset.k==='needs');});
-  pinWrap.classList.open=true; pinWrap.classList.add('open');
+  // Цъкнато дърво -> най-вероятно човекът казва, че го няма (needs = премахни).
+  // Празно място -> най-вероятно казва, че тук ИМА дърво (has = добави).
+  pinKind = onTree ? 'needs' : 'has';
+  document.querySelectorAll('.pinKind').forEach(function(o){o.classList.toggle('sel',o.dataset.k===pinKind);});
+  pinWrap.classList.add('open');
+  showPinGhost(x,z,onTree);
 }
+
+// малък маркер, който показва къде точно ще отиде точката
+let pinGhost=null;
+function showPinGhost(x,z,onTree){
+  if(pinGhost){ scene.remove(pinGhost); pinGhost=null; }
+  const col=onTree?0xff5230:0x3ddc84;
+  const g=new THREE.Group();
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(2.2*SC,0.35*SC,6,20),
+    new THREE.MeshBasicMaterial({color:C(col)}));
+  ring.rotation.x=-Math.PI/2; ring.position.set(x,0.5,z);
+  const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.22*SC,0.22*SC,9*SC*2.15,5),
+    new THREE.MeshBasicMaterial({color:C(col)}));
+  stem.position.set(x,4.5*SC*2.15,z);
+  g.add(ring,stem); scene.add(g); pinGhost=g;
+}
+function clearPinGhost(){ if(pinGhost){ scene.remove(pinGhost); pinGhost=null; } }
 
 // ══════════ ЦИКЪЛ ══════════
 let tG=0;
