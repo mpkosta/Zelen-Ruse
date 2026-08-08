@@ -982,6 +982,16 @@ async function build(){
 
   window.__occAt=function(which,x,z){ return occAt(which==='B'?occB:occR,x,z); };
 
+  // ——— корекции по картата, одобрени от админа ———
+  window.__EDITS=[];
+  if(typeof API_BASE==='string' && API_BASE){
+    try{
+      const r=await fetch(API_BASE.replace(/\/$/,'')+'/api/tree-edits/');
+      const j=await r.json();
+      window.__EDITS=j.edits||[];
+    }catch(e){ window.__EDITS=[]; }
+  }
+
   await step(.74,L[lang].ld5);
 
   // ——— ДЪРВЕТА: реални от OSM + редове + запълване на парковете ———
@@ -1006,6 +1016,28 @@ async function build(){
     return null;                                      // няма свободно място наблизо
   }
   decPts(D.t).forEach(function(p){ const q=nudgeOut(T(p)); if(q) treePts.push(q); });
+
+  // ——— прилагане на гражданските корекции ———
+  const EDITS=window.__EDITS||[];
+  const M_LAT_E=111300, M_LON_E=111320*Math.cos(D.o[1]*Math.PI/180);
+  function llToXZ(lon,lat){ return [ (lon-D.o[0])*M_LON_E*SC, (D.o[1]-lat)*M_LAT_E*SC ]; }
+  const RADIUS=8*SC;                       // 8 метра около посоченото място
+  const removes=EDITS.filter(function(e){return e.a==='remove';}).map(function(e){return llToXZ(e.lon,e.lat);});
+  if(removes.length){
+    for(let i=treePts.length-1;i>=0;i--){
+      const t=treePts[i];
+      for(let k=0;k<removes.length;k++){
+        const dx=t[0]-removes[k][0], dz=t[1]-removes[k][1];
+        if(dx*dx+dz*dz < RADIUS*RADIUS){ treePts.splice(i,1); break; }
+      }
+    }
+  }
+  EDITS.forEach(function(e){
+    if(e.a==='add'){ const q=llToXZ(e.lon,e.lat); treePts.push(q); }
+  });
+  window.__editStats={add:EDITS.filter(function(e){return e.a==='add';}).length,
+                      remove:removes.length,
+                      suggest:EDITS.filter(function(e){return e.a==='suggest';}).length};
   D.tr.forEach(function(s){
     const pts=decPts(s).map(T);
     for(let i=0;i<pts.length-1;i++){
@@ -1094,6 +1126,13 @@ async function build(){
 
   // ——— ГОРЕЩИ КОРИДОРИ + предложени дървета ———
   const hotSpots=[];
+  // граждански предложения — рисуват се като зелени „предложени“ дървета
+  (window.__EDITS||[]).forEach(function(e){
+    if(e.a!=='suggest') return;
+    const x=(e.lon-D.o[0])*111320*Math.cos(D.o[1]*Math.PI/180)*SC;
+    const z=(D.o[1]-e.lat)*111300*SC;
+    hotSpots.push([x,z]);
+  });
   D.r.forEach(function(r){
     const nm=r[2]||''; const hot=HOT.find(function(h){ return nm.indexOf(h.m)>=0; });
     if(!hot) return;
@@ -1732,7 +1771,7 @@ langBtn.onclick=function(){ lang=lang==='bg'?'en':'bg'; applyLang(); };
 // Локално тестване: 'http://127.0.0.1:8000'
 // След деплой в Railway: 'https://вашият-адрес.up.railway.app'
 // Празно = събирането на точки е изключено (картата работи нормално).
-const API_BASE='https://web-production-83138.up.railway.app';
+const API_BASE='';
 
 // обратна проекция: единици на макета -> географски координати
 const M_LAT=111300, M_LON=111320*Math.cos(D.o[1]*Math.PI/180);
@@ -1783,9 +1822,11 @@ function loadPins(){
   fetch(API_BASE.replace(/\/$/,'')+'/api/pins/')
     .then(function(r){return r.json();})
     .then(function(d){
-      (d.pins||[]).forEach(function(p){ addPinMarker(p.lon,p.lat,p.kind,false); });
-      if(d.counts) toast((lang==='bg'?'Отбелязани от граждани: ':'Citizen reports: ')+
-        ((d.counts.needs||0)+(d.counts.has||0)));
+      // Пиновете НЕ се показват публично — те са вътрешен инструмент.
+      // На картата се вижда само последицата (виж /api/tree-edits/).
+      const es=window.__editStats||{add:0,remove:0,suggest:0};
+      const tot=es.add+es.remove+es.suggest;
+      if(tot) toast((lang==='bg'?'Картата е поправена от граждани: ':'Citizen corrections applied: ')+tot);
     })
     .catch(function(){});
 }
