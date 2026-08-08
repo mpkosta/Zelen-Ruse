@@ -355,22 +355,18 @@ scene.background=C(0x9dbdd4);
 scene.fog=new THREE.Fog(C(0x9dbdd4).getHex(),1400,4000);
 // НОВО: Променяме 'near' и 'far' плановете от 1/12000 на 15/8000. 
 // Това спира "мигането" и изчезването на сгради на мобилни устройства.
-const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,15,8000);
+const camera = new THREE.PerspectiveCamera(48, innerWidth / innerHeight, 15, 8000);
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || Math.min(innerWidth, innerHeight) < 720;
 
 const renderer = new THREE.WebGLRenderer({
-  antialias: !isMobile,
-  logarithmicDepthBuffer: !isMobile,
+  antialias: true, // Включваме заглаждането навсякъде за по-ясни ръбове
+  logarithmicDepthBuffer: false, // Изключваме го, за да няма размазване отблизо
   powerPreference: "high-performance"
 });
 
-// НОВО: Връщаме високото качество (махаме размазването), съвременните телефони ще се справят, 
-// тъй като премахнахме сенките за тях.
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-// 2. Cap pixel ratio to 1.0 on mobile to drastically reduce pixel fill-rate overhead
-renderer.setPixelRatio(isMobile ? Math.min(devicePixelRatio, 1.5) : Math.min(devicePixelRatio, 2));
+// Пълна резолюция за остри сгради без размазване при зуум
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(innerWidth, innerHeight);
-
 // 3. Disable shadow maps completely on mobile devices
 renderer.shadowMap.enabled = !isMobile;
 if (!isMobile) {
@@ -1387,10 +1383,23 @@ function flyTo(x,z,r,ph,th){
     if(k<1) flyAnim=requestAnimationFrame(stp); else flyAnim=null;
   })(t0);
 }
-const cel=renderer.domElement;
-let dragMode='rotate';
-const pointers = {}; // Пази координатите на всеки пръст
+const cel = renderer.domElement;
+let dragMode = 'pan'; // Правим местенето (pan) режим по подразбиране
+const pointers = {}; 
 let moved = 0;
+
+// Визуално обновяваме бутоните, за да покажат, че сме в режим "Местене"
+document.getElementById('modePan').classList.add('on');
+document.getElementById('modeRot').classList.remove('on');
+
+// Функция за местене на камерата
+function panCamera(dx, dy) {
+  const speed = radius * 0.002;
+  const right = new THREE.Vector3(Math.cos(theta), 0, -Math.sin(theta));
+  const fwd = new THREE.Vector3(-Math.sin(theta), 0, -Math.cos(theta));
+  target.add(right.multiplyScalar(-dx * speed));
+  target.add(fwd.multiplyScalar(dy * speed));
+}
 
 // 1. Прихващане на докосване/клик
 cel.addEventListener('pointerdown', function(e) {
@@ -1402,44 +1411,50 @@ cel.addEventListener('pointerdown', function(e) {
   moved = 0;
 });
 
-// 2. Движение (Въртене с 1 пръст, Зуум и местене с 2 пръста)
+// 2. Движение 
 cel.addEventListener('pointermove', function(e) {
   if (!pointers[e.pointerId]) return;
-  e.preventDefault(); // Спира скролирането на страницата
+  e.preventDefault(); 
 
   const keys = Object.keys(pointers);
   
-  // АКО ИМА 2 ПРЪСТА (Pinch-to-Zoom + Pan)
+  // --- УПРАВЛЕНИЕ С 2 ПРЪСТА (Зуум и Въртене) ---
   if (keys.length === 2) {
     const p1 = pointers[keys[0]], p2 = pointers[keys[1]];
     const prevDist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-    const prevCx = (p1.x + p2.x) / 2, prevCy = (p1.y + p2.y) / 2;
+    const prevAngle = Math.atan2(p1.y - p2.y, p1.x - p2.x);
 
-    pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; // Обновяваме текущия пръст
+    pointers[e.pointerId] = { x: e.clientX, y: e.clientY }; 
 
     const p1New = pointers[keys[0]], p2New = pointers[keys[1]];
     const newDist = Math.hypot(p1New.x - p2New.x, p1New.y - p2New.y);
-    const newCx = (p1New.x + p2New.x) / 2, newCy = (p1New.y + p2New.y) / 2;
+    const newAngle = Math.atan2(p1New.y - p2New.y, p1New.x - p2New.x);
 
-    if (prevDist > 0) radius *= (prevDist / newDist); // Зуум
-    panBy(newCx - prevCx, newCy - prevCy);            // Местене
+    // Zoom (Pinch)
+    if (prevDist > 0) radius *= (prevDist / newDist); 
+    
+    // Rotate (Twist)
+    let angleDiff = newAngle - prevAngle;
+    if (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+    if (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+    theta -= angleDiff; 
     
     moved += 10;
     updateCam();
   } 
-  // АКО Е 1 ПРЪСТ / МИШКА (Rotate или Pan според бутона)
+  // --- УПРАВЛЕНИЕ С 1 ПРЪСТ / МИШКА (Местене или Въртене според бутона) ---
   else if (keys.length === 1) {
     const p = pointers[e.pointerId];
     const dx = e.clientX - p.x, dy = e.clientY - p.y;
     moved += Math.abs(dx) + Math.abs(dy);
     
-    // e.button === 2 е Десен клик. 
-    if (e.button === 2 || e.shiftKey || (dragMode === 'pan' && !e.altKey)) {
-      panBy(dx, dy);
+    if (e.button === 2 || e.shiftKey || dragMode === 'pan') {
+      panCamera(dx, dy); // Местене
     } else {
-      theta -= dx * 0.005;
+      theta -= dx * 0.005; // Въртене
       phi -= dy * 0.005;
     }
+    
     p.x = e.clientX; p.y = e.clientY;
     updateCam();
   }
@@ -1450,7 +1465,6 @@ function handlePointerEnd(e) {
   if (!pointers[e.pointerId]) return;
   delete pointers[e.pointerId];
   
-  // Ако всички пръсти са вдигнати и не сме влачили (moved < 6) -> това е КЛИК
   if (Object.keys(pointers).length === 0 && moved < 6) {
     if(pinMode) tryPlacePin(e.clientX, e.clientY);
     else pick(e.clientX, e.clientY);
@@ -1461,28 +1475,34 @@ cel.addEventListener('pointerup', handlePointerEnd);
 cel.addEventListener('pointercancel', handlePointerEnd);
 cel.addEventListener('pointerout', handlePointerEnd);
 
-// 4. Скрол с мишка (само за компютри)
+// 4. Скрол с мишка (компютър)
 cel.addEventListener('wheel', function(e) {
   e.preventDefault();
   if(e.ctrlKey || e.metaKey) radius *= 1 + e.deltaY * 0.004;
-  else panBy(-e.deltaX * 0.9, -e.deltaY * 0.9);
+  else panCamera(-e.deltaX * 0.9, -e.deltaY * 0.9);
   updateCam();
 }, {passive: false});
 
-// 5. Клавиатура (само за компютри)
+// 5. Клавиатура (компютър)
 addEventListener('keydown', function(e) {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   const st = radius / 16;
-  if(e.key === 'ArrowUp') panBy(0, st); else if(e.key === 'ArrowDown') panBy(0, -st);
-  else if(e.key === 'ArrowLeft') panBy(st, 0); else if(e.key === 'ArrowRight') panBy(-st, 0);
-  else if(e.key === 'q' || e.key === 'Q') theta += 0.08; else if(e.key === 'e' || e.key === 'E') theta -= 0.08;
-  else if(e.key === '+' || e.key === '=') radius *= 0.88; else if(e.key === '-') radius *= 1.14;
+  const right = new THREE.Vector3(Math.cos(theta), 0, -Math.sin(theta)).multiplyScalar(st);
+  const fwd = new THREE.Vector3(-Math.sin(theta), 0, -Math.cos(theta)).multiplyScalar(st);
+
+  if(e.key === 'ArrowUp') target.add(fwd); 
+  else if(e.key === 'ArrowDown') target.sub(fwd);
+  else if(e.key === 'ArrowLeft') target.sub(right); 
+  else if(e.key === 'ArrowRight') target.add(right);
+  else if(e.key === 'q' || e.key === 'Q') theta += 0.08; 
+  else if(e.key === 'e' || e.key === 'E') theta -= 0.08;
+  else if(e.key === '+' || e.key === '=') radius *= 0.88; 
+  else if(e.key === '-') radius *= 1.14;
   else return;
+  
   e.preventDefault(); updateCam();
 });
-let pinch=0;
-cel.addEventListener('touchstart',function(e){ if(e.touches.length===2){var a=e.touches[0],b=e.touches[1];pinch=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);} },{passive:true});
-cel.addEventListener('touchmove',function(e){ if(e.touches.length===2){var a=e.touches[0],b=e.touches[1];var d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);radius*=pinch/d;pinch=d;updateCam();} },{passive:true});
+
 document.getElementById('modeRot').onclick=function(){dragMode='rotate';this.classList.add('on');document.getElementById('modePan').classList.remove('on');};
 document.getElementById('modePan').onclick=function(){dragMode='pan';this.classList.add('on');document.getElementById('modeRot').classList.remove('on');};
 document.getElementById('zoomIn').onclick=function(){radius*=0.82;updateCam();};
