@@ -9,7 +9,7 @@
   :root{--line:#2a3247;--text:#ede9e0;--dim:#9aa0b0;--accent:#f5b971;--hot:#ff4d2e;--green:#3ddc84}
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;overflow:hidden;font-family:-apple-system,'Segoe UI',Roboto,sans-serif;background:#0a0e1a;color:var(--text)}
-  #scene{position:fixed;inset:0} canvas{display:block}
+  #scene{position:fixed;inset:0;touch-action:none} canvas{display:block;touch-action:none}
   #hdr{position:fixed;top:0;left:0;right:0;padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:30}
   #hdr .t h1{font-family:Georgia,serif;font-weight:400;font-size:22px;letter-spacing:2px;text-shadow:0 1px 8px rgba(0,0,0,.55)}
   #hdr .t h1 span{color:var(--green)}
@@ -364,7 +364,7 @@ const renderer = new THREE.WebGLRenderer({
 });
 
 // 2. Cap pixel ratio to 1.0 on mobile to drastically reduce pixel fill-rate overhead
-renderer.setPixelRatio(isMobile ? 1 : Math.min(devicePixelRatio, 2));
+renderer.setPixelRatio(isMobile ? Math.min(devicePixelRatio, 1.5) : Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 
 // 3. Disable shadow maps completely on mobile devices
@@ -1384,30 +1384,46 @@ function flyTo(x,z,r,ph,th){
   })(t0);
 }
 const cel=renderer.domElement;
-let drag=null,moved=0,dragMode='rotate';
-function panBy(dx,dy){
-  const s=radius/900,f=new THREE.Vector3(Math.sin(theta),0,Math.cos(theta));
-  target.addScaledVector(new THREE.Vector3(f.z,0,-f.x),dx*s).addScaledVector(f,dy*s);
-}
-cel.addEventListener('contextmenu',function(e){e.preventDefault();});
+let drag=null, moved=0, dragMode='rotate';
+let activePointerId = null; // НОВО: Следи кой пръст върти картата
+
 cel.addEventListener('pointerdown',function(e){
   if(flyAnim){cancelAnimationFrame(flyAnim);flyAnim=null;}
   if(tourActive) stopTour();
+  
+  // Игнорираме втори пръст (за да не скача камерата при зуум)
+  if(activePointerId !== null) return;
+  activePointerId = e.pointerId;
+
   drag={b:e.button,x:e.clientX,y:e.clientY}; moved=0;
 });
+
 addEventListener('pointermove',function(e){
-  if(!drag) return;
-  const dx=e.clientX-drag.x,dy=e.clientY-drag.y; moved+=Math.abs(dx)+Math.abs(dy);
+  // Отразяваме движението САМО на първия пръст
+  if(!drag || e.pointerId !== activePointerId) return;
+  
+  const dx=e.clientX-drag.x, dy=e.clientY-drag.y; 
+  moved+=Math.abs(dx)+Math.abs(dy);
+  
   if(drag.b===2||e.shiftKey||(dragMode==='pan'&&!e.altKey)) panBy(dx,dy);
   else { theta-=dx*0.005; phi-=dy*0.005; }
+  
   drag.x=e.clientX; drag.y=e.clientY; updateCam();
 });
+
 addEventListener('pointerup',function(e){
+  if(e.pointerId !== activePointerId) return; // Игнорираме пускането на втория пръст
+  
   if(drag&&moved<6){
     if(pinMode) tryPlacePin(e.clientX,e.clientY);
     else pick(e.clientX,e.clientY);
   }
   drag=null;
+  activePointerId=null; // Освобождаваме контрола
+});
+
+addEventListener('pointercancel',function(e){
+  if(e.pointerId === activePointerId) { drag=null; activePointerId=null; }
 });
 cel.addEventListener('wheel',function(e){
   e.preventDefault();
