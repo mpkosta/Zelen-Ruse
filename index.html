@@ -128,6 +128,12 @@
     #sunWrap{padding:6px 9px} #sunVal{width:40px;font-size:11.5px}
     #disc{font-size:9px;max-width:58vw;line-height:1.35}
     #toast{bottom:78px}
+    /* Надписите („ж.к. Захарна фабрика" и др.) са широки и поглъщаха влаченето.
+       На телефон само кръгчето е активно, с уголемена зона за пръст. */
+    .flbl{pointer-events:none}
+    .flbl .txt{pointer-events:none}
+    .flbl .dot{pointer-events:auto;position:relative}
+    .flbl .dot::after{content:'';position:absolute;left:50%;top:50%;width:36px;height:36px;transform:translate(-50%,-50%);border-radius:50%}
   }
   /* ================= ВЕРТИКАЛЕН ТЕЛЕФОН ================= */
   @media (max-width:700px) and (orientation:portrait){
@@ -1446,6 +1452,11 @@ function updateLabels(){
 // ══════════ КАМЕРА ══════════
 let theta=-0.10, phi=0.90, radius=1150;
 const target=new THREE.Vector3(0,0,0);
+// Камерата се преизчислява МАКСИМУМ веднъж на кадър. Преди това ставаше при
+// всяко движение на пръста (на 120Hz екран — над 2 пъти повече от кадрите),
+// което задръстваше телефона и движението изглеждаше „заяждащо".
+let camDirty=false;
+function requestCam(){ camDirty=true; }
 function updateCam(){
   phi=Math.max(.2,Math.min(1.46,phi)); radius=Math.max(45,Math.min(1900,radius));
   target.x=Math.max(TABLE.x0,Math.min(TABLE.x1,target.x));
@@ -1457,7 +1468,8 @@ function updateCam(){
   // near расте със зуума: реже по-малко отблизо, по-точна дълбочина отдалеч
   const nearWant=Math.max(1.5,Math.min(40,radius*0.035));
   if(Math.abs(camera.near-nearWant)>0.2){ camera.near=nearWant; camera.updateProjectionMatrix(); }
-  document.getElementById('compass').style.transform='rotate('+(-theta*180/Math.PI)+'deg)';
+  const _cmp=document.getElementById('compass');
+  if(_cmp) _cmp.style.transform='rotate('+(-theta*180/Math.PI)+'deg)';
   sunLight.target.position.set(target.x,0,target.z);
   sunLight.target.updateMatrixWorld();
   const ext=Math.max(110,Math.min(620,radius*0.85));
@@ -1535,7 +1547,7 @@ cel.addEventListener('pointermove', function(e) {
     theta -= angleDiff; 
     
     moved += 10;
-    updateCam();
+    requestCam();
   } 
   // --- УПРАВЛЕНИЕ С 1 ПРЪСТ / МИШКА ---
   else if (keys.length === 1) {
@@ -1561,7 +1573,7 @@ cel.addEventListener('pointermove', function(e) {
     }
     
     p.x = e.clientX; p.y = e.clientY;
-    updateCam();
+    requestCam();
   }
 });
 
@@ -1580,14 +1592,17 @@ function handlePointerEnd(e) {
 
 cel.addEventListener('pointerup', handlePointerEnd);
 cel.addEventListener('pointercancel', handlePointerEnd);
-cel.addEventListener('pointerout', handlePointerEnd);
+// ВАЖНО: 'pointerout' се задействаше при доближаване до ръба на екрана и
+// прекъсваше влаченето по средата. Заменен с 'lostpointercapture', който
+// САМО почиства (без да избира точка, защото координатите му не са надеждни).
+cel.addEventListener('lostpointercapture', function(e){ delete pointers[e.pointerId]; });
 
 // 4. Скрол с мишка (компютър)
 cel.addEventListener('wheel', function(e) {
   e.preventDefault();
   if(e.ctrlKey || e.metaKey) radius *= 1 + e.deltaY * 0.004;
   else panCamera(-e.deltaX * 0.9, -e.deltaY * 0.9);
-  updateCam();
+  requestCam();
 }, {passive: false});
 
 // 5. Клавиатура (компютър)
@@ -1829,7 +1844,7 @@ langBtn.onclick=function(){ lang=lang==='bg'?'en':'bg'; applyLang(); };
 // Локално тестване: 'http://127.0.0.1:8000'
 // След деплой в Railway: 'https://вашият-адрес.up.railway.app'
 // Празно = събирането на точки е изключено (картата работи нормално).
-const API_BASE='https://web-production-83138.up.railway.app';
+const API_BASE='';
 
 // обратна проекция: единици на макета -> географски координати
 const M_LAT=111300, M_LON=111320*Math.cos(D.o[1]*Math.PI/180);
@@ -1986,8 +2001,25 @@ function clearPinGhost(){ if(pinGhost){ scene.remove(pinGhost); pinGhost=null; }
 
 // ══════════ ЦИКЪЛ ══════════
 let tG=0;
+// Адаптивно качество: ако телефонът не смогва, свалямe резолюцията на рендера.
+// Така S24 (и по-стари) стават плавни, без да се жертва нищо на по-бързи машини.
+let fpsT0=performance.now(), fpsN=0, dprLevel=Math.min(window.devicePixelRatio,2), dprFloor=0.75;
 function loop(){
   requestAnimationFrame(loop);
+  if(camDirty){ updateCam(); camDirty=false; }
+  // Измерване на кадрите на всеки ~30 кадъра
+  fpsN++;
+  if(fpsN>=30){
+    const now=performance.now(), fps=fpsN*1000/(now-fpsT0);
+    if(fps<34 && dprLevel>dprFloor){
+      dprLevel=Math.max(dprFloor,dprLevel-0.25);
+      renderer.setPixelRatio(dprLevel);
+    } else if(fps>56 && dprLevel<Math.min(window.devicePixelRatio,2)){
+      dprLevel=Math.min(Math.min(window.devicePixelRatio,2),dprLevel+0.25);
+      renderer.setPixelRatio(dprLevel);
+    }
+    fpsN=0; fpsT0=now;
+  }
   tG+=.016;
   beacons.forEach(function(b,i){
     b.m.position.y=b.y0+Math.sin(tG*2+i)*2.2;
