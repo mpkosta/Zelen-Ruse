@@ -109,7 +109,7 @@
   .flbl.di .dot{width:15px;height:15px;background:#e8dfc8}
   .flbl .txt{font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 3px #000,0 0 6px #000;white-space:nowrap}
   .slbl{position:absolute;top:0;left:0;will-change:transform;pointer-events:none;font-size:10px;color:#3a3830;font-weight:700;text-shadow:0 1px 2px rgba(255,255,255,.8),0 0 5px rgba(255,255,255,.55);white-space:nowrap}
-  @media (max-width:700px){
+  @media (max-width:700px),(max-height:520px){
     #hdr .t h1{font-size:17px} #hdr .t p{display:none}
     #legend,#hint{display:none} input[type=range]{width:88px} #sunLvl{display:none}
     #panel{top:auto;height:64%;width:100%;max-width:100%;border-left:none;border-top:1px solid var(--line);transform:translateY(105%)}
@@ -117,8 +117,15 @@
     #hamburger{display:block}
     .row,#actRow{display:none;width:100%;justify-content:flex-start;background:rgba(15,20,31,.94);border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:6px}
     .row.mopen,#actRow.mopen{display:flex}
-    #impact{top:auto;bottom:100px;left:8px;width:200px} #navCtl{bottom:150px} #compass{bottom:340px}
+    #impact{top:auto;bottom:100px;left:8px;width:200px} #navCtl{bottom:150px} #compass{display:none}
+    .btn{font-size:11px;padding:7px 9px}
+    #navCtl{gap:8px} #navCtl .btn{width:44px;height:44px;font-size:18px}
+    #sunWrap{padding:6px 9px} #sunVal{width:40px;font-size:11.5px}
+    #timeBig{font-size:34px;top:52px}
   }
+  /* Режим „чиста карта": бутонът 👁 скрива целия интерфейс освен навигацията */
+  body.uiHidden #hdr,body.uiHidden #impact,body.uiHidden #legend,body.uiHidden #hint,
+  body.uiHidden #disc,body.uiHidden #scaleBar,body.uiHidden #compass{display:none!important}
 </style>
 </head>
 <body>
@@ -178,6 +185,7 @@
 <div id="aboutWrap"><div class="modal"><button class="close2" id="aboutClose">✕</button>
   <h2 id="aboutTitle"></h2><p id="aboutP1"></p><p id="aboutP2"></p><p id="aboutP3"></p></div></div>
 <div id="navCtl">
+  <button class="btn" id="uiToggle" title="Скрий/покажи интерфейса">👁</button>
   <button class="btn on" id="modeRot">⟲</button><button class="btn" id="modePan">✥</button>
   <button class="btn" id="zoomIn">＋</button><button class="btn" id="zoomOut">－</button></div>
 <svg id="compass" viewBox="0 0 44 44">
@@ -1733,6 +1741,11 @@ document.getElementById('hamburger').onclick=function(){
   document.querySelectorAll('.row').forEach(function(r){r.classList.toggle('mopen');});
   document.getElementById('actRow').classList.toggle('mopen');
 };
+// „Чиста карта": скрива панелите, за да остане максимум място за докосване на картата
+document.getElementById('uiToggle').onclick=function(){
+  document.body.classList.toggle('uiHidden');
+  this.classList.toggle('on', document.body.classList.contains('uiHidden'));
+};
 const aboutWrap=document.getElementById('aboutWrap');
 document.getElementById('aboutBtn').onclick=function(){aboutWrap.classList.add('open');};
 document.getElementById('aboutClose').onclick=function(){aboutWrap.classList.remove('open');};
@@ -1787,7 +1800,7 @@ langBtn.onclick=function(){ lang=lang==='bg'?'en':'bg'; applyLang(); };
 // Локално тестване: 'http://127.0.0.1:8000'
 // След деплой в Railway: 'https://вашият-адрес.up.railway.app'
 // Празно = събирането на точки е изключено (картата работи нормално).
-const API_BASE='https://web-production-83138.up.railway.app';
+const API_BASE='';
 
 // обратна проекция: единици на макета -> географски координати
 const M_LAT=111300, M_LON=111320*Math.cos(D.o[1]*Math.PI/180);
