@@ -298,7 +298,7 @@ window.addEventListener('error',function(ev){
   if(le){le.style.display='block';
     le.textContent='Грешка при изграждане: '+(ev.message||'')+(ev.lineno?(' (ред '+ev.lineno+')'):'');}
 });
-const CONTACT_EMAIL='zelenruse.happily081@passinbox.com'; // ➜ сменете с вашия имейл
+const CONTACT_EMAIL='zelenruse.happily081@passinbox.com';
 
 // ——— декодер на опакованите координати ———
 const CS="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-";
@@ -361,11 +361,29 @@ scene.fog=new THREE.Fog(C(0x9dbdd4).getHex(),1400,4000);
 const camera = new THREE.PerspectiveCamera(48, innerWidth / innerHeight, 2, 8000);
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || Math.min(innerWidth, innerHeight) < 720;
 
-const renderer = new THREE.WebGLRenderer({
-  antialias: true, // Включваме заглаждането навсякъде за по-ясни ръбове
-  logarithmicDepthBuffer: false, // Изключваме го, за да няма размазване отблизо
-  powerPreference: "high-performance"
-});
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({
+    antialias: true, // Включваме заглаждането навсякъде за по-ясни ръбове
+    logarithmicDepthBuffer: false, // Изключваме го, за да няма размазване отблизо
+    powerPreference: "high-performance"
+  });
+} catch (e) {
+  // WebGL не е наличен (стар телефон, вграден Facebook браузър, изключено
+  // хардуерно ускорение). Показваме приятелско съобщение вместо счупен екран.
+  const inApp = /FBAN|FBAV|Instagram|Messenger/i.test(navigator.userAgent);
+  document.getElementById('scene').innerHTML =
+    '<div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#eef4ea;z-index:9999;padding:24px;">' +
+    '<div style="max-width:420px;background:#fff;border-radius:16px;padding:28px;font-family:system-ui,sans-serif;color:#2d3b2d;box-shadow:0 8px 30px rgba(0,0,0,.12);text-align:center;">' +
+    '<div style="font-size:42px;margin-bottom:12px;">🌳</div>' +
+    '<h2 style="margin:0 0 10px;font-size:20px;">Картата не може да се зареди</h2>' +
+    '<p style="margin:0 0 14px;font-size:15px;line-height:1.5;">Вашият браузър не поддържа 3D графика (WebGL), която е нужна за картата.</p>' +
+    (inApp
+      ? '<p style="margin:0;font-size:15px;line-height:1.5;"><b>Решение:</b> отваряте линка през Facebook. Натиснете менюто <b>⋮</b> (горе вдясно) и изберете <b>„Отвори в браузър"</b> / <b>„Open in browser"</b>.</p>'
+      : '<p style="margin:0;font-size:15px;line-height:1.5;"><b>Решение:</b> опитайте с актуален Chrome, Firefox или Safari. Ако сте на лаптоп — проверете дали хардуерното ускорение е включено в настройките на браузъра.</p>') +
+    '</div></div>';
+  throw e; // спираме останалия скрипт
+}
 
 // Остри сгради, но с таван: при DPR 3 се рендерират 9x повече пиксели,
 // което забива телефона. Таван 2 изглежда рязко и остава плавно.
@@ -1769,7 +1787,7 @@ langBtn.onclick=function(){ lang=lang==='bg'?'en':'bg'; applyLang(); };
 // Локално тестване: 'http://127.0.0.1:8000'
 // След деплой в Railway: 'https://вашият-адрес.up.railway.app'
 // Празно = събирането на точки е изключено (картата работи нормално).
-const API_BASE='https://web-production-83138.up.railway.app';
+const API_BASE='';
 
 // обратна проекция: единици на макета -> географски координати
 const M_LAT=111300, M_LON=111320*Math.cos(D.o[1]*Math.PI/180);
